@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const basePath = "http://localhost:3001/persons";
+const basePath = "https://phonebook-open-fullstack.herokuapp.com/api/persons";
 
 const getAllPersons = () => {
     return axios.get(basePath).then(res => res.data);

@@ -47,8 +47,8 @@ const App = () => {
     e.preventDefault();
     if (newName && newName.length !== 0) {
       if (!checkExists(newName)) {
-        const newId = persons.length + 1;
-        const newPerson = { name: newName.trim(), number: newNumber.trim(), id: newId }
+          const newPerson = { name: newName.trim(), number: newNumber.trim()
+        }
         personService
         .createPerson(newPerson)
         .then((data) => {
@@ -60,10 +60,11 @@ const App = () => {
         
       } else {
         const existingPerson = persons.filter((person, index) => person.name.toLowerCase().trim() === newName.toLowerCase().trim())[0];
-        if (window.confirm(`${existingPerson.name} is already added to phonebook, replace the old number with a new one?`)) {
-          existingPerson.number = newNumber.trim();
+        const existingPersonCopy = {...existingPerson};
+        if (window.confirm(`${existingPersonCopy.name} is already added to phonebook, replace the old number with a new one?`)) {
+          existingPersonCopy.number = newNumber.trim();
           personService
-          .updatePerson(existingPerson)
+          .updatePerson(existingPersonCopy)
           .then((data) => {
             const index = persons.findIndex(item => item.name.toLowerCase() === data.name.toLowerCase());
             let personsCopy = [...persons];
@@ -72,7 +73,7 @@ const App = () => {
             displayMessage(`Updated ${data.name}`);
             clearInputs();
           })
-          .catch(err => displayError(`Information of ${existingPerson.name} has already been removed from server`));
+          .catch(err => displayError(`Information of ${existingPersonCopy.name} has already been removed from server`));
         }
         
       }
