@@ -55,7 +55,7 @@ const App = () => {
           setPersons(persons => [...persons, data]);
           displayMessage(`Added ${data.name}`);
         })
-        .catch(err => displayError("Failed to add new person"));
+        .catch(err => displayError(err.response.data.error));
         clearInputs();
         
       } else {
