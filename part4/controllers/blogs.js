@@ -4,11 +4,6 @@ const Blog = require('../models/blog');
 blogsRouter.get('/', async (request, response) => {
     const result = await Blog.find({});
     response.json(result);
-    // Blog
-    //     .find({})
-    //     .then(blogs => {
-    //         response.json(blogs)
-    // })
 })
 
 blogsRouter.post('/', async (request, response) => {
@@ -21,11 +16,6 @@ blogsRouter.post('/', async (request, response) => {
     })
     const result = await blog.save();
     response.status(201).json(result);
-    // blog
-    //     .save()
-    //     .then(result => {
-    //         response.status(201).json(result)
-    //     })
 })
 
 blogsRouter.delete("/:id", async (request, response) => {
