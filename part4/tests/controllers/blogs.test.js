@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const supertest = require('supertest');
 const app = require('../../app');
 const Blog = require('../../models/blog');
+const User = require('../../models/user');
 const helper = require('../test_helper');
 
 const api = supertest(app);
@@ -26,7 +27,7 @@ describe('blogs', () => {
             url: 'url3',
             likes: 3
         }
-    ]
+    ];
 
     beforeEach(async () => {
        await Blog.deleteMany({});
@@ -53,6 +54,7 @@ describe('blogs', () => {
     
     describe('POST', () => {
         test('new blog can be added', async () => {
+            const token = await helper.getToken();
             const newBlog = {
                 title: 'title4',
                 author: 'author4',
@@ -60,7 +62,7 @@ describe('blogs', () => {
                 likes: 4
             };
     
-            await api.post('/api/blogs').send(newBlog).expect(201).expect('Content-Type', /application\/json/);
+            await api.post('/api/blogs').set('Authorization', `Bearer ${token}`).send(newBlog).expect(201).expect('Content-Type', /application\/json/);
     
             const blogsInDb = await helper.blogsInDb();
             expect(blogsInDb).toHaveLength(blogs.length + 1);
@@ -76,13 +78,14 @@ describe('blogs', () => {
         });
     
         test('missing likes property defaults value to zero', async () => {
+            const token = await helper.getToken();
             const newBlog = {
                 title: 'title4',
                 author: 'author4',
                 url: 'url4'
             };
     
-            await api.post('/api/blogs').send(newBlog).expect(201).expect('Content-Type', /application\/json/);
+            await api.post('/api/blogs').set('Authorization', `Bearer ${token}`).send(newBlog).expect(201).expect('Content-Type', /application\/json/);
             const blogsInDb = await helper.blogsInDb();
             expect(blogsInDb).toHaveLength(blogs.length + 1);
     
@@ -93,38 +96,51 @@ describe('blogs', () => {
         });
     
         test('mising title returns status 400', async () => {
+            const token = await helper.getToken();
             const newBlog = {
                 author: 'author4',
                 url: 'url4'
             };
     
-            await api.post('/api/blogs').send(newBlog).expect(400);
+            await api.post('/api/blogs').set('Authorization', `Bearer ${token}`).send(newBlog).expect(400);
         });
     
         test('mising url returns status 400', async () => {
+            const token = await helper.getToken();
             const newBlog = {
                 title: 'title4',
                 author: 'author4'
             };
     
-            await api.post('/api/blogs').send(newBlog).expect(400);
+            await api.post('/api/blogs').set('Authorization', `Bearer ${token}`).send(newBlog).expect(400);
         });
     });
 
     describe('DELETE', () => {
         test('wrong id returns CastError', async () => {
-            await api.delete('/api/blogs/1').send().expect(500);
+            const token = await helper.getToken();
+            await api.delete('/api/blogs/1').set('Authorization', `Bearer ${token}`).send().expect(500);
         });
     
         test('delete one entity', async () => {
+            const token = await helper.getToken();
+            const newBlog = {
+                title: 'title4',
+                author: 'author4',
+                url: 'url4',
+                likes: 4
+            };
+    
+            const addedBlog = await api.post('/api/blogs').set('Authorization', `Bearer ${token}`).send(newBlog).expect(201).expect('Content-Type', /application\/json/);
+    
             const blogsInDb = await helper.blogsInDb();
-            expect(blogsInDb).toHaveLength(3);
+            expect(blogsInDb).toHaveLength(4);
     
-            const id = blogsInDb[0].id;
+            const id = addedBlog.body.id.toString();
     
-            await api.delete(`/api/blogs/${id}`).send().expect(204);
+            await api.delete(`/api/blogs/${id}`).set('Authorization', `Bearer ${token}`).send().expect(204);
             const blogsInDbAfterDelete = await helper.blogsInDb();
-            expect(blogsInDbAfterDelete).toHaveLength(2);
+            expect(blogsInDbAfterDelete).toHaveLength(3);
         });
     });
 
@@ -166,8 +182,10 @@ describe('blogs', () => {
         });
     });
 
-    afterAll(() => {
-        mongoose.connection.close()
+    afterAll(async () => {
+        await Blog.deleteMany({});
+        await User.deleteMany({});
+        mongoose.connection.close();
     });
 });
     
