@@ -11,7 +11,7 @@ const errorHandler = (err, req, res, next) => {
             return res.status(401).json({ error: err.message });
         case 'JsonWebTokenError':
             return res.status(401).json({ error: 'Invalid token' });
-        case 'JsonWebTokenError':
+        case 'TokenExpiredError':
             return res.status(401).json({ error: 'Token expired' });
         case 'CastError':
             return res.status(500).json({ error: err.message });
