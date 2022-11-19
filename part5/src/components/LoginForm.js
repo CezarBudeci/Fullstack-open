@@ -1,21 +1,22 @@
-import { useState } from "react";
-import Notification from "./notification";
+import { useState } from 'react';
+import PropTypes from 'prop-types';
+import Notification from './Notification';
 
 const LoginForm = ({ login, message, error }) => {
     const [userCredentials, setUserCredentials] = useState({ username: '', password: '' });
 
     const handleInput = (e) => {
-        setUserCredentials({...userCredentials, [e.target.name]: e.target.value});
-    }
+        setUserCredentials({ ...userCredentials, [e.target.name]: e.target.value });
+    };
 
     const handleSubmit = (e) => {
         e.preventDefault();
         login(userCredentials.username, userCredentials.password);
-    }
+    };
 
     return (
         <div>
-            
+
             <form onSubmit={e => handleSubmit(e)}>
                 <div>
                     <h2>Log in to application</h2>
@@ -38,6 +39,12 @@ const LoginForm = ({ login, message, error }) => {
             </form>
         </div>
     );
+};
+
+LoginForm.propTypes = {
+    login: PropTypes.func.isRequired,
+    message: PropTypes.string,
+    error: PropTypes.string
 };
 
 export default LoginForm;
