@@ -3,9 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@testing-library/jest-dom": "^5.16.4",
-    "@testing-library/react": "^13.1.1",
-    "@testing-library/user-event": "^14.1.1",
     "axios": "^0.27.2",
     "prop-types": "^15.8.1",
     "react": "^18.1.0",
@@ -15,10 +12,13 @@
   },
   "scripts": {
     "start": "react-scripts start",
+    "dev": "concurrently --kill-others \"react-scripts start\" \"npx eslint-auto-fix\"",
     "build": "react-scripts build",
     "test": "react-scripts test",
+    "devtest": "concurrently --kill-others \"react-scripts test\" \"npx eslint-auto-fix\"",
     "eject": "react-scripts eject",
-    "eslint": "eslint ."
+    "eslint": "eslint .",
+    "cypress:open": "cypress open"
   },
   "eslintConfig": {
     "extends": [
@@ -40,6 +40,12 @@
   },
   "proxy": "http://localhost:3003",
   "devDependencies": {
+    "@testing-library/jest-dom": "^5.16.5",
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/user-event": "^14.4.3",
+    "concurrently": "^7.5.0",
+    "cypress": "^11.1.0",
+    "eslint-auto-fix": "^1.0.4",
     "eslint-plugin-jest": "^27.1.5"
   }
 }

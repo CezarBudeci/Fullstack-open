@@ -26,9 +26,11 @@ const Blogs = (props) => {
             <Togglable buttonLabel = "new blog" ref = {blogFormRef}>
                 <BlogForm createBlog = {createBlog} />
             </Togglable>
-            {props.blogs.map(blog =>
-                <Blog key = {blog.id} blog = {blog} updateBlog = {props.updateBlog} deleteBlog = {props.deleteBlog} />
-            )}
+            <div className = 'blogs'>
+                {props.blogs.map(blog =>
+                    <Blog key = {blog.id} blog = {blog} updateBlog = {props.updateBlog} deleteBlog = {props.deleteBlog} />
+                )}
+            </div>
         </div>
     );
 };
