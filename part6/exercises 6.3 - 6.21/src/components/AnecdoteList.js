@@ -1,9 +1,9 @@
 import { useSelector, useDispatch } from 'react-redux';
 import { updateAnecdote } from '../reducers/anecdoteReducer';
-import { createNotification, removeNotification } from '../reducers/notificationReducer';
+import { createNotification } from '../reducers/notificationReducer';
 
 const AnecdoteList = () => {
-    const sortAnecdotes = (anecdotes) => {
+    const sortAnecdotes = anecdotes => {
         const anecdotesCopy = [...anecdotes];
         anecdotesCopy.sort((a, b) => {
             if (a.votes > b.votes) {
@@ -17,30 +17,35 @@ const AnecdoteList = () => {
         return anecdotesCopy;
     };
 
-    const anecdotes = useSelector(state =>  state.filter.filter === '' ? 
-                                            sortAnecdotes(state.anecdotes) : 
-                                            sortAnecdotes(state.anecdotes.filter(item => item.content.toLowerCase().includes(state.filter.filter.toLowerCase())))
+    const anecdotes = useSelector(state =>
+        state.filter.filter === ''
+            ? sortAnecdotes(state.anecdotes)
+            : sortAnecdotes(
+                  state.anecdotes.filter(item =>
+                      item.content
+                          .toLowerCase()
+                          .includes(state.filter.filter.toLowerCase())
+                  )
+              )
     );
     const dispatch = useDispatch();
 
-    const vote = (anecdote) => {
+    const vote = anecdote => {
         dispatch(updateAnecdote(anecdote));
         dispatch(createNotification(`you voted '${anecdote.content}'`, 5));
     };
 
     return (
         <div>
-            {anecdotes.map(anecdote =>
+            {anecdotes.map(anecdote => (
                 <div key={anecdote.id}>
+                    <div>{anecdote.content}</div>
                     <div>
-                        {anecdote.content}
-                    </div>
-                    <div>
-            has {anecdote.votes}
+                        has {anecdote.votes}
                         <button onClick={() => vote(anecdote)}>vote</button>
                     </div>
                 </div>
-            )}
+            ))}
         </div>
     );
 };

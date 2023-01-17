@@ -2,6 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
     message: '',
+    type: '',
     id: '',
 };
 
@@ -12,12 +13,14 @@ const notificationSlice = createSlice({
         setNotification(state, action) {
             return {
                 message: action.payload.message,
+                type: action.payload.type,
                 id: action.payload.id,
             };
         },
         removeNotification(state, action) {
             return {
                 message: '',
+                type: '',
                 id: '',
             };
         },
@@ -27,7 +30,7 @@ const notificationSlice = createSlice({
 export const { setNotification, removeNotification } =
     notificationSlice.actions;
 
-export const createNotification = (text, time) => {
+export const createNotification = (text, type, time) => {
     return (dispatch, getState) => {
         return new Promise(() => {
             const timeInMillis = time * 1000;
@@ -41,7 +44,7 @@ export const createNotification = (text, time) => {
                 dispatch(removeNotification());
             }, timeInMillis);
 
-            dispatch(setNotification({ message: text, id: timeoutId }));
+            dispatch(setNotification({ message: text, type, id: timeoutId }));
         });
     };
 };
