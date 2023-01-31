@@ -1,5 +1,4 @@
 import { forwardRef } from 'react';
-import PropTypes from 'prop-types';
 
 import { createBlog } from '../reducers/blogsReducer';
 import { useDispatch } from 'react-redux';
@@ -16,6 +15,9 @@ const BlogForm = forwardRef((props, ref) => {
         };
         dispatch(createBlog(blog));
         ref.current.toggleVisible();
+        e.target.title.value = '';
+        e.target.author.value = '';
+        e.target.url.value = '';
     };
 
     return (

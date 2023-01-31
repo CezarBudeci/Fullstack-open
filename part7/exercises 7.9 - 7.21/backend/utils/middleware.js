@@ -20,7 +20,7 @@ const errorHandler = (err, req, res, next) => {
     }
 
     next(err);
-}
+};
 
 const tokenExtractor = (req, res, next) => {
     const authorization = req.get('authorization');
@@ -29,7 +29,7 @@ const tokenExtractor = (req, res, next) => {
     }
 
     next();
-}
+};
 
 const userExtractor = async (req, res, next) => {
     const decodedToken = jwt.verify(req.token, SECRET);
@@ -41,6 +41,6 @@ const userExtractor = async (req, res, next) => {
     req.user = user;
 
     next();
-}
+};
 
 module.exports = { errorHandler, tokenExtractor, userExtractor };

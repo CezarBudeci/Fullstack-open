@@ -1,28 +1,21 @@
 import { useDispatch, useSelector } from 'react-redux';
-import PropTypes from 'prop-types';
-import {
-    updateBlog,
-    deleteBlog,
-    updateBlogShowDetails,
-} from '../reducers/blogsReducer';
+import { updateBlog, addComment, deleteBlog } from '../reducers/blogsReducer';
+import { useNavigate, useParams } from 'react-router-dom';
 
-const Blog = ({ blog }) => {
-    const blogStyle = {
-        paddingTop: 10,
-        paddingLeft: 2,
-        border: 'solid',
-        borderWidth: 1,
-        marginBottom: 5,
-    };
+const Blog = () => {
+    // const blogStyle = {
+    //     paddingTop: 10,
+    //     paddingLeft: 2,
+    //     border: 'solid',
+    //     borderWidth: 1,
+    //     marginBottom: 5,
+    // };
 
+    const id = useParams().id;
+    const navigate = useNavigate();
     const dispatch = useDispatch();
     const stateUser = useSelector(state => state.user);
-
-    const toggleShowDetails = () => {
-        dispatch(
-            updateBlogShowDetails({ ...blog, showDetails: !blog.showDetails })
-        );
-    };
+    const blog = useSelector(state => state.blogs.find(blog => blog.id === id));
 
     const likeBlog = () => {
         const blogToUpdate = { ...blog, likes: blog.likes + 1 };
@@ -30,9 +23,18 @@ const Blog = ({ blog }) => {
         dispatch(updateBlog(blogToUpdate));
     };
 
+    const handleSubmit = e => {
+        e.preventDefault();
+
+        dispatch(addComment(blog.id, { text: e.target.commentText.value }));
+
+        e.target.commentText.value = '';
+    };
+
     const removeBlog = () => {
         if (window.confirm(`Remove ${blog.title} by ${blog.author}`)) {
             dispatch(deleteBlog(blog.id));
+            navigate(-1);
         }
     };
 
@@ -45,47 +47,42 @@ const Blog = ({ blog }) => {
     };
 
     return (
-        <div style={blogStyle} className="blog">
-            {blog.showDetails ? (
-                <div className="blog-details">
-                    <p>
-                        {blog.title}{' '}
-                        <button
-                            className="hide-blog"
-                            onClick={toggleShowDetails}>
-                            hide
-                        </button>
-                    </p>
-                    <p>{blog.url}</p>
-                    <p>
-                        likes {blog.likes}{' '}
+        <div className="blog">
+            {blog && (
+                <div>
+                    <h2>{blog.title}</h2>
+                    <div>
+                        <a href={blog.url}>{blog.url}</a>
+                    </div>
+                    <div>
+                        {blog.likes} likes{' '}
                         <button className="like-blog" onClick={likeBlog}>
                             like
                         </button>
-                    </p>
-                    <p>{blog.author}</p>
-                    {checkUser() ? (
+                    </div>
+                    <div>added by {blog.author}</div>
+                    {checkUser() && (
                         <button className="remove-blog" onClick={removeBlog}>
                             remove
                         </button>
-                    ) : (
-                        <div />
                     )}
-                </div>
-            ) : (
-                <div className="blog-short">
-                    {blog.title} {blog.author}{' '}
-                    <button className="view-blog" onClick={toggleShowDetails}>
-                        view
-                    </button>
+                    <h2>comments</h2>
+                    <div>
+                        <form onSubmit={e => handleSubmit(e)}>
+                            <input type="text" name="commentText" />
+                            <button>add comment</button>
+                        </form>
+                    </div>
+                    <ul>
+                        {blog.comments &&
+                            blog.comments.map(comment => (
+                                <li key={comment.id}>{comment.text}</li>
+                            ))}
+                    </ul>
                 </div>
             )}
         </div>
     );
-};
-
-Blog.propTypes = {
-    blog: PropTypes.object.isRequired,
 };
 
 export default Blog;

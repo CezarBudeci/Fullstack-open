@@ -19,7 +19,23 @@ const createBlog = blog => {
 };
 
 const updateBlog = blog => {
-    return axios.put(`${baseUrl}/${blog.id}`, blog).then(res => res.data);
+    return axios
+        .put(`${baseUrl}/${blog.id}`, blog, {
+            headers: {
+                Authorization: userService.getToken(),
+            },
+        })
+        .then(res => res.data);
+};
+
+const addComment = (blogId, comment) => {
+    return axios
+        .post(`${baseUrl}/${blogId}/comments`, comment, {
+            headers: {
+                Authorization: userService.getToken(),
+            },
+        })
+        .then(res => res.data);
 };
 
 const deleteBlog = id => {
@@ -32,4 +48,4 @@ const deleteBlog = id => {
         .then(res => res.data);
 };
 
-export default { getAll, createBlog, updateBlog, deleteBlog };
+export default { getAll, createBlog, updateBlog, addComment, deleteBlog };

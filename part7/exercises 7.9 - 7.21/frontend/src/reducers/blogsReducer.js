@@ -36,24 +36,11 @@ const blogsSlice = createSlice({
 
                 return 0;
             });
-            return blogs.map(blog => {
-                blog.showDetails = false;
-                return blog;
-            });
+            return blogs;
         },
         addBlog(state, action) {
             let payload = action.payload;
-            payload.showDetails = false;
             state.push(payload);
-        },
-        updateBlogShowDetails(state, action) {
-            const payload = action.payload;
-            state.map(blog => {
-                if (blog.id === payload.id) {
-                    blog.showDetails = payload.showDetails;
-                }
-                return blog;
-            });
         },
         updateBlogAction(state, action) {
             const payload = action.payload;
@@ -79,12 +66,23 @@ const blogsSlice = createSlice({
 
             return updatedState;
         },
+        addCommentAction(state, action) {
+            const payload = action.payload;
+            const blogToUpdate = state.find(
+                blog => blog.id === payload.blog.id
+            );
+            const commentToAdd = {
+                text: payload.text,
+                id: payload.id,
+            };
+            blogToUpdate.comments.push(commentToAdd);
+        },
         removeBlog(state, action) {
             const id = action.payload;
             const blogToDeleteIndex = state.findIndex(blog => blog.id === id);
             let stateCopy = [...state];
             if (blogToDeleteIndex > -1) {
-                stateCopy.splice(blogToDeleteIndex);
+                stateCopy.splice(blogToDeleteIndex, 1);
             }
 
             return stateCopy;
@@ -95,8 +93,8 @@ const blogsSlice = createSlice({
 export const {
     setBlogs,
     addBlog,
-    updateBlogShowDetails,
     updateBlogAction,
+    addCommentAction,
     removeBlog,
 } = blogsSlice.actions;
 
@@ -134,6 +132,14 @@ export const updateBlog = blog => {
         return blogsService
             .updateBlog(blog)
             .then(data => dispatch(updateBlogAction(data)));
+    };
+};
+
+export const addComment = (id, comment) => {
+    return dispatch => {
+        return blogsService
+            .addComment(id, comment)
+            .then(data => dispatch(addCommentAction(data)));
     };
 };
 

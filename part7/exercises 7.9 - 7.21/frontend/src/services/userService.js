@@ -9,6 +9,10 @@ const setToken = newToken => {
 
 const getToken = () => token;
 
+const getAllUsers = () => {
+    return axios.get(baseUrl).then(res => res.data);
+};
+
 const getCurrentUser = () => {
     return axios
         .get(`${baseUrl}/user`, {
@@ -19,4 +23,4 @@ const getCurrentUser = () => {
         .then(res => res.data);
 };
 
-export default { setToken, getToken, getCurrentUser };
+export default { setToken, getToken, getAllUsers, getCurrentUser };
