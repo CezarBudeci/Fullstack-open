@@ -1,3 +1,11 @@
+body {
+    margin: 0;
+}
+
+::placeholder {
+    text-align: center;
+}
+
 .message {
     color: green;
     background: lightgrey;

@@ -13,6 +13,8 @@ const handleError = (dispatch, error, action) => {
             dispatch(createNotification('Failed to delete blog', ERROR, 3));
         } else if (action === 'CREATE') {
             dispatch(createNotification('Failed to create blog', ERROR, 3));
+        } else if (action === 'COMMENT') {
+            dispatch(createNotification('Failed to add comment', ERROR, 3));
         } else {
             dispatch(createNotification('An error has occured', ERROR, 3));
         }
@@ -131,7 +133,8 @@ export const updateBlog = blog => {
     return dispatch => {
         return blogsService
             .updateBlog(blog)
-            .then(data => dispatch(updateBlogAction(data)));
+            .then(data => dispatch(updateBlogAction(data)))
+            .catch(err => handleError(dispatch, err));
     };
 };
 
@@ -139,7 +142,8 @@ export const addComment = (id, comment) => {
     return dispatch => {
         return blogsService
             .addComment(id, comment)
-            .then(data => dispatch(addCommentAction(data)));
+            .then(data => dispatch(addCommentAction(data)))
+            .catch(err => handleError(dispatch, err, 'COMMENT'));
     };
 };
 
@@ -158,7 +162,7 @@ export const deleteBlog = id => {
                     )
                 );
             })
-            .catch(err => handleError(err, 'DELETE'));
+            .catch(err => handleError(dispatch, err, 'DELETE'));
     };
 };
 
