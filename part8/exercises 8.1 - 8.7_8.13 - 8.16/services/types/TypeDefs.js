@@ -28,7 +28,9 @@ module.exports = typeDefs = `
         bookCount: Int!
         authorCount: Int!
         allBooks(author: String, genre: String): [Book]!
+        allGenres: [String]!
         allAuthors: [Author!]!
+        me: User
     }
 
     type Mutation {
@@ -40,7 +42,6 @@ module.exports = typeDefs = `
             username: String!
             favoriteGenre: String!
         ): User
-        me: User
         addBook(
             title: String!
             author: String!
@@ -51,5 +52,9 @@ module.exports = typeDefs = `
             name: String!
             setBornTo: Int!
         ): Author
+    }
+    
+    type Subscription {
+        bookAdded: Book
     }
 `;

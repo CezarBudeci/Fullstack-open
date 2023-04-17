@@ -3,6 +3,9 @@ const Book = require('../../models/Book');
 const { GraphQLError } = require('graphql');
 const User = require('../../models/User');
 const jwt = require('jsonwebtoken');
+const { PubSub } = require('graphql-subscriptions');
+
+console.log(PubSub);
 
 module.exports = resolvers = {
     Author: {
@@ -59,7 +62,30 @@ module.exports = resolvers = {
 
             return await Book.find(options).populate('author');
         },
+        allGenres: async (root, args) => {
+            let genres = [];
+
+            const books = await Book.find({});
+            console.log(books);
+            if (books) {
+                books.forEach(book => {
+                    genres = genres.concat(book.genres);
+                });
+            }
+            return [...new Set(genres)];
+        },
         allAuthors: async () => Author.find({}),
+        me: async (root, async, context) => {
+            if (!context.currentUser) {
+                throw new GraphQLError('You are not authorized', {
+                    extensions: {
+                        code: 'FORBIDDEN',
+                    },
+                });
+            }
+
+            return context.currentUser;
+        },
     },
     Mutation: {
         login: async (root, args) => {
@@ -76,6 +102,7 @@ module.exports = resolvers = {
             const userForToken = {
                 id: user._id,
                 username: user.username,
+                favoriteGenre: user.favoriteGenre,
             };
 
             return { value: jwt.sign(userForToken, process.env.JWT_SECRET) };
@@ -97,18 +124,6 @@ module.exports = resolvers = {
                     },
                 });
             }
-        },
-        me: async (root, async, context) => {
-            // console.log(context);
-            if (!context.currentUser) {
-                throw new GraphQLError('You are not authorized', {
-                    extensions: {
-                        code: 'FORBIDDEN',
-                    },
-                });
-            }
-
-            return context.currentUser;
         },
         addBook: async (root, args, context) => {
             const currentUser = context.currentUser;
@@ -163,6 +178,7 @@ module.exports = resolvers = {
             try {
                 savedBook = await newBook.save();
             } catch (error) {
+                console.log(error);
                 throw new GraphQLError('Saving book failed', {
                     extensions: {
                         code: 'BAD_USER_INPUT',
@@ -201,6 +217,14 @@ module.exports = resolvers = {
             existingAuthor.born = args.setBornTo;
 
             return await existingAuthor.save();
+        },
+    },
+    Subscription: {
+        bookAdded: {
+            subscribe: () => pubsub.asyncIterator(['BOOK_ADDED']),
+            resolve: payload => {
+                return payload;
+            },
         },
     },
 };

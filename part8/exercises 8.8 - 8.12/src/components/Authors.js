@@ -2,7 +2,7 @@ import { useQuery } from '@apollo/client';
 import { ALL_AUTHORS } from '../queries/AuthorsQueries';
 import UpdateAuthor from './UpdateAuthor';
 
-const Authors = () => {
+const Authors = ({ token }) => {
     const result = useQuery(ALL_AUTHORS);
 
     return (
@@ -26,7 +26,7 @@ const Authors = () => {
                         ))}
                 </tbody>
             </table>
-            <UpdateAuthor />
+            {token ? <UpdateAuthor /> : <p>Please login to update authors</p>}
         </div>
     );
 };

@@ -1,8 +1,27 @@
-import { useQuery } from '@apollo/client';
-import { ALL_BOOKS } from '../queries/BooksQueries';
+import { useQuery, useSubscription } from '@apollo/client';
+import { ALL_BOOKS, ALL_GENRES, BOOK_ADDED } from '../queries/BooksQueries';
+import { useState, useEffect } from 'react';
 
 const Books = () => {
-    const result = useQuery(ALL_BOOKS);
+    const [selectedGenre, setSelectedGenre] = useState(null);
+    const [genres, setGenres] = useState([]);
+    const booksResult = useQuery(ALL_BOOKS, {
+        variables: { genre: selectedGenre },
+    });
+    const genresResult = useQuery(ALL_GENRES);
+
+    useSubscription(BOOK_ADDED, {
+        onSubscriptionData: ({ subscriptionData }) => {
+            genresResult.refetch();
+            booksResult.refetch();
+        },
+    });
+
+    useEffect(() => {
+        if (genresResult.data && genresResult.data.allGenres) {
+            setGenres(genresResult.data.allGenres);
+        }
+    }, [genresResult.data]);
 
     return (
         <div>
@@ -15,17 +34,27 @@ const Books = () => {
                         <th>author</th>
                         <th>published</th>
                     </tr>
-                    {result.data &&
-                        result.data.allBooks &&
-                        result.data.allBooks.map(book => (
+                    {booksResult.data &&
+                        booksResult.data.allBooks &&
+                        booksResult.data.allBooks.map(book => (
                             <tr key={book.title}>
                                 <td>{book.title}</td>
-                                <td>{book.author}</td>
+                                <td>{book.author.name}</td>
                                 <td>{book.published}</td>
                             </tr>
                         ))}
                 </tbody>
             </table>
+            <select
+                defaultValue={selectedGenre}
+                onChange={({ target }) => {
+                    setSelectedGenre(target.value);
+                }}>
+                <option value={null} label="all genres" />
+                {genres.map(genre => (
+                    <option key={genre} value={genre} label={genre} />
+                ))}
+            </select>
         </div>
     );
 };
