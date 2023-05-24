@@ -5,3 +5,6 @@
 [submodule "part9/exercises 9.8 - 9.13/patientor"]
 	path = part9/exercises 9.8 - 9.13/patientor
 	url = https://github.com/CezarBudeci/patientor.git
+[submodule "part9/exercise 9.16/flight-diary"]
+	path = part9/exercise 9.16/flight-diary
+	url = https://github.com/CezarBudeci/flight-diary.git
