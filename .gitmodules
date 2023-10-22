@@ -2,8 +2,8 @@
 	path = part3
 	url = https://github.com/CezarBudeci/fullstack-open-phonebook-nodejs
 	branch = main
-[submodule "part9/exercises 9.8 - 9.13_9.16 - 9.29/patientor"]
-	path = part9/exercises 9.8 - 9.13_9.16 - 9.29/patientor
+[submodule "part9/exercises 9.8 - 9.13_9.20 - 9.29/patientor"]
+	path = part9/exercises 9.8 - 9.13_9.20 - 9.29/patientor
 	url = https://github.com/CezarBudeci/patientor.git
 [submodule "part9/exercise 9.16 - 9.19/flight-diary"]
 	path = part9/exercise 9.16 - 9.19/flight-diary

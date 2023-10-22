@@ -10,6 +10,7 @@ import patientService from './services/patients';
 import PatientListPage from './components/PatientListPage';
 import PatientPage from './components/PatientPage';
 
+// test
 const App: React.FC<{}> = () => {
     const [patients, setPatients] = useState<Patient[]>([]);
 
